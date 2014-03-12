@@ -16,7 +16,6 @@
 
 ;;;; UI ;;;;
 ;(load-theme 'solarized-dark t)                 ;; Color theme
-;(add-hook 'kill-emacs-hook 'sr-speedbar-close)
 (defadvice save-buffers-kill-emacs (before update-mod-flag activate)
     (sr-speedbar-close))                        ;; Close sr-speedbar before exiting
 ;(add-to-list 'load-path "~/git/powerline")
@@ -29,7 +28,6 @@
 (global-set-key [f9] 'load-theme)              ;; Select theme bind to F9
 (setq frame-title-format "%b - GNU Emacs 24")  ;; Window title
 (setq-default tab-width 4)                     ;; Default tab width
-(setq mouse-wheel-mode nil)                    ;; Disable mouse wheel
 ;(helm-mode 1)                                 ;; Useful completion list, but can be annoying.
 (menu-bar-mode -1)
 (when (fboundp 'tool-bar-mode)
@@ -41,7 +39,7 @@
   (windmove-default-keybindings))
 
 ;; Minimalism kit:
-(add-to-list 'load-path "~/git/emacs.el")
+;(add-to-list 'load-path "~/git/minimalism.el")
 
 ;; Speedbar:
 (load-file "~/.emacs.d/sr-speedbar.el")
@@ -80,7 +78,7 @@
 ;;;;
 ;;;; Org Mode
 ;;;;
-;(add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp"))
+(add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp"))
 ;(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 ;(add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
 ; Standard key bindings for org-mode
@@ -105,12 +103,15 @@
 (global-set-key [f11] 'switch-full-screen)
 (global-set-key [f10] 'switch-maximized)
 
+
 ;;;;
 ;;;; Saving Sessions
 ;;;; wg-help for info
+
 (require 'workgroups2)
 ; Change prefix key (before activating WG):
 (setq wg-prefix-key (kbd "C-c z"))
+
 ; Change workgroups session file:
 (setq wg-default-session-file "~/.emacs.d/.emacs_workgroups")
 (workgroups-mode 1)                 ; Must be at the bottom of .emacs

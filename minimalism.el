@@ -1,5 +1,9 @@
 ;; All credit goes to Bastien Guerry - http://bzg.fr
 
+; List of commands:
+;
+;     hidden-mode-line-mode
+;     big-fringe-mode
 
 ;;;;
 ;;;; Hide mode bar
@@ -34,33 +38,22 @@
 ;;
 ;; Big fringe mode
 ;;
-(defvar bzg-big-fringe-mode nil)
-(define-minor-mode bzg-big-fringe-mode
+(defvar big-fringe-mode nil)
+(define-minor-mode big-fringe-mode
   "Minor mode to use big fringe in the current buffer."
   :init-value nil
   :global t
-  :variable bzg-big-fringe-mode
+  :variable big-fringe-mode
   :group 'editing-basics
-  (if (not bzg-big-fringe-mode)
+  (if (not big-fringe-mode)
       (set-fringe-style nil)
     (set-fringe-mode
      (/ (- (frame-pixel-width)
            (* 100 (frame-char-width)))
         2))))
 
-;; Now activate this global minor mode
-(bzg-big-fringe-mode 1)
-
-;; To activate the fringe by default and deactivate it when windows
-;; are split vertically:
-(add-hook 'window-configuration-change-hook
-          (lambda ()
-            (if (delq nil
-                      (let ((fw (frame-width)))
-                        (mapcar (lambda(w) (< (window-width w) fw))
-                                (window-list))))
-                (bzg-big-fringe-mode 0)
-              (bzg-big-fringe-mode 1))))
+;; Activate this global minor mode
+;(big-fringe-mode 1)
 
 ;; Use a minimal cursor
 (setq cursor-type 'hbar)
