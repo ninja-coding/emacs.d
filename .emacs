@@ -1,19 +1,3 @@
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (zenburn)))
- '(custom-safe-themes (quote ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "11d069fbfb0510e2b32a5787e26b762898c7e480364cbc0779fe841662e4cf5d" "70cf411fbf9512a4da81aa1e87b064d3a3f0a47b19d7a4850578c8d64cac2353" "97a2b10275e3e5c67f46ddaac0ec7969aeb35068c03ec4157cf4887c401e74b1" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" "0f0e3af1ec61d04ff92f238b165dbc6d2a7b4ade7ed9812b4ce6b075e08f49fe" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" default)))
- '(erc-hide-list (quote ("JOIN" "QUIT")))
- '(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring stamp track))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
 ;;;; UI ;;;;
 ;(load-theme 'solarized-dark t)                 ;; Color theme
 (defadvice save-buffers-kill-emacs (before update-mod-flag activate)
@@ -39,7 +23,7 @@
   (windmove-default-keybindings))
 
 ;; Minimalism kit:
-;(add-to-list 'load-path "~/git/minimalism.el")
+(load-file "~/git/emacs.el/minimalism.el")
 
 ;; Speedbar:
 (load-file "~/.emacs.d/sr-speedbar.el")
@@ -66,7 +50,9 @@
 (global-set-key "\C-cç" 'ispell-change-dictionary) ;; binded to C-c ç
 (require 'iso-transl)                              ;; accent bug workaround
 
+;;
 ;; Package repos:
+;;
 (require 'package)
 (add-to-list 'package-archives 
     '("marmalade" .
@@ -75,12 +61,26 @@
     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
+;; el-get:
+(add-to-list 'load-path (expand-file-name "~/git/el-get/"))
+(setq el-get-github-default-url-type "https")
+(add-to-list 'load-path "~/git/el-get/el-get")
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+(el-get 'sync)
+
 ;;;;
 ;;;; Org Mode
 ;;;;
-(add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp"))
-;(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
-;(add-hook 'org-mode-hook 'turn-on-font-lock) ; not needed when global-font-lock-mode is on
+(add-to-list 'load-path (expand-file-name "~/git/org-mode/lisp"))  ;; Load dev version of org-mode
+;(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))  ;; Autoload org-mode
+;(add-hook 'org-mode-hook 'turn-on-font-lock)  ;; not needed when global-font-lock-mode is on
 ; Standard key bindings for org-mode
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)

@@ -56,12 +56,8 @@
 ;(big-fringe-mode 1)
 
 ;; Use a minimal cursor
-(setq cursor-type 'hbar)
-
-;; Get rid of the indicators in the fringe
-(mapcar (lambda(fb) (set-fringe-bitmap-face fb 'org-hide))
-        fringe-bitmaps)
+;(setq cursor-type 'hbar)
 
 ;; Set the color of the fringe
-(custom-set-faces
- '(fringe ((t (:background "white")))))
+;(custom-set-faces
+; '(fringe ((t (:background "black")))))
