@@ -6,6 +6,8 @@
       "http://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives
+             '("elpy" . "http://jorgenschaefer.github.io/packages/"))
 
 ;; el-get
 (add-to-list 'load-path (expand-file-name "~/git/el-get/"))
@@ -66,6 +68,9 @@ re-downloaded in order to locate PACKAGE."
      ido-vertical-mode
      ido-at-point
      smooth-scrolling
+     elpy
+     flx-ido
+     ido-ubiquitous
      git-commit-mode
      gitconfig-mode
      gitignore-mode)))
