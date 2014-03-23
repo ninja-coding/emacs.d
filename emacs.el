@@ -38,6 +38,9 @@
 ;; Defaults ;;
 ;;;;;;;;;;;;;;
 
+;; Save active buffer when frame loses focus (24.4)
+;(add-hook 'focus-out-hook 'save-buffer)
+
 ;; Move between windows with shift + arrows
 (if (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
