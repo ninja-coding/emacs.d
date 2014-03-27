@@ -1,4 +1,4 @@
-(add-to-list 'load-path (expand-file-name "~/git/emacs.el/"))
+(add-to-list 'load-path (expand-file-name "~/git/emacs.d/"))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Package repos ;;
@@ -9,6 +9,7 @@
 ;;;;;;;;
 ;; UI ;;
 ;;;;;;;;
+(require 'dark-theme)
 (global-font-lock-mode 1)
 (setq font-lock-maximum-decoration t)
 
@@ -40,6 +41,10 @@
 
 ;; Save active buffer when frame loses focus (24.4)
 ;(add-hook 'focus-out-hook 'save-buffer)
+
+;; auto-indent on <enter>
+(add-hook 'prog-mode-hook '(lambda ()
+                             (local-set-key (kbd "RET") 'newline-and-indent)))
 
 ;; Move between windows with shift + arrows
 (if (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
@@ -79,19 +84,19 @@
 (global-undo-tree-mode)
 
 ;; Load sr-speedbar
-(load-file "~/git/emacs.el/sr-speedbar.el")
+(load-file "~/git/emacs.d/sr-speedbar.el")
 (global-set-key (kbd "C-c ñ") 'sr-speedbar-toggle)
 ;; Close sr-speedbar before exiting
 (defadvice save-buffers-kill-emacs (before update-mod-flag activate)
   (sr-speedbar-close))
 
 ;; Load minimalism 
-(load-file "~/git/emacs.el/minimalism.el")
+(load-file "~/git/emacs.d/minimalism.el")
 
 ;; Hide dired details
 (require 'dired-details-plus)
 
-;; Fullscreen / Maximised:
+;; Fullscreen / Maximized:
 (defun switch-full-screen ()
   (interactive)
   (shell-command "wmctrl -r :ACTIVE: -btoggle,fullscreen"))
