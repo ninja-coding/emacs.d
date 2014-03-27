@@ -226,7 +226,7 @@
 
 (require 'highlight-indentation)
 (add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
-(add-hook 'python-mode-hook 'linum-mode)
+(add-hook 'python-mode-hook 'nlinum-mode)
 
 ;;;;;;;
 ;; C ;;
