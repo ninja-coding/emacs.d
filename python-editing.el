@@ -1,13 +1,14 @@
 ;; Code borrowed from https://github.com/gabrielelanaro/emacs-for-python/
-; "C-c y" -> Duplicate line
+; "C-c d" -> Duplicate line
 ; "C-c c" -> Duplicate line and comment the first
 ; "C-c l" -> Mark a line
 ; "M-<up>" -> Move line or region up
 ; "M-<down>" -> Move line or region down
+; "C-c -" -> Expand snippet
 
 ;; Duplicating lines and commenting them
 
-(defun djcb-duplicate-line (&optional commentfirst)
+(defun duplicate-line (&optional commentfirst)
   "comment line at point; if COMMENTFIRST is non-nil, comment the
 original" (interactive)
 (beginning-of-line)
@@ -21,10 +22,10 @@ original" (interactive)
   (forward-line -1)))
 
 ;; duplicate a line
-(global-set-key (kbd "C-c y") 'djcb-duplicate-line)
+(global-set-key (kbd "C-c d") 'duplicate-line)
 
 ;; duplicate a line and comment the first
-(global-set-key (kbd "C-c c")(lambda()(interactive)(djcb-duplicate-line t)))
+(global-set-key (kbd "C-c c")(lambda()(interactive)(duplicate-line t)))
 
 ;; Mark whole line
 (defun mark-line (&optional arg)
@@ -111,56 +112,82 @@ arg lines up."
           )
 
 ;; ropemacs Integration with auto-completion
-(require 'auto-complete)
-(defun ac-ropemacs-candidates ()
-  (mapcar (lambda (completion)
-      (concat ac-prefix completion))
-    (rope-completions)))
+;; (require 'auto-complete)
+;; (defun ac-ropemacs-candidates ()
+;;   (mapcar (lambda (completion)
+;;       (concat ac-prefix completion))
+;;     (rope-completions)))
 
-(ac-define-source nropemacs
-  '((candidates . ac-ropemacs-candidates)
-    (symbol . "p")))
+;; (ac-define-source nropemacs
+;;   '((candidates . ac-ropemacs-candidates)
+;;     (symbol . "p")))
 
-(ac-define-source nropemacs-dot
-  '((candidates . ac-ropemacs-candidates)
-    (symbol . "p")
-    (prefix . c-dot)
-    (requires . 0)))
+;; (ac-define-source nropemacs-dot
+;;   '((candidates . ac-ropemacs-candidates)
+;;     (symbol . "p")
+;;     (prefix . c-dot)
+;;     (requires . 0)))
 
-(defun ac-nropemacs-setup ()
-  (setq ac-sources (append '(ac-source-nropemacs
-                             ac-source-nropemacs-dot) ac-sources)))
-(defun ac-python-mode-setup ()
-  (add-to-list 'ac-sources 'ac-source-yasnippet))
+;; (defun ac-nropemacs-setup ()
+;;   (setq ac-sources (append '(ac-source-nropemacs
+;;                              ac-source-nropemacs-dot) ac-sources)))
+;; (defun ac-python-mode-setup ()
+;;   (add-to-list 'ac-sources 'ac-source-yasnippet))
 
-(add-hook 'python-mode-hook 'ac-python-mode-setup)
-(add-hook 'rope-open-project-hook 'ac-nropemacs-setup)
+;; (add-hook 'python-mode-hook 'ac-python-mode-setup)
+;; (add-hook 'rope-open-project-hook 'ac-nropemacs-setup)
 
-;;; use popup menu for yas-choose-value
-(require 'popup)
+;; ;;; use popup menu for yas-choose-value
+;; (require 'popup)
 
-; add some shotcuts in popup menu mode
-(define-key popup-menu-keymap (kbd "M-n") 'popup-next)
-(define-key popup-menu-keymap (kbd "TAB") 'popup-next)
-(define-key popup-menu-keymap (kbd "<tab>") 'popup-next)
-(define-key popup-menu-keymap (kbd "<backtab>") 'popup-previous)
-(define-key popup-menu-keymap (kbd "M-p") 'popup-previous)
+;; ; add some shotcuts in popup menu mode
+;; (define-key popup-menu-keymap (kbd "M-n") 'popup-next)
+;; (define-key popup-menu-keymap (kbd "TAB") 'popup-next)
+;; (define-key popup-menu-keymap (kbd "<tab>") 'popup-next)
+;; (define-key popup-menu-keymap (kbd "<backtab>") 'popup-previous)
+;; (define-key popup-menu-keymap (kbd "M-p") 'popup-previous)
 
-(defun yas-popup-isearch-prompt (prompt choices &optional display-fn)
-  (when (featurep 'popup)
-    (popup-menu*
-     (mapcar
-      (lambda (choice)
-        (popup-make-item
-         (or (and display-fn (funcall display-fn choice))
-             choice)
-         :value choice))
-      choices)
-     :prompt prompt
-     ;; start isearch mode immediately
-     :isearch t
-     )))
-(setq yas-prompt-functions '(yas-popup-isearch-prompt yas-ido-prompt yas-no-prompt))
+;; (defun yas-popup-isearch-prompt (prompt choices &optional display-fn)
+;;   (when (featurep 'popup)
+;;     (popup-menu*
+;;      (mapcar
+;;       (lambda (choice)
+;;         (popup-make-item
+;;          (or (and display-fn (funcall display-fn choice))
+;;              choice)
+;;          :value choice))
+;;       choices)
+;;      :prompt prompt
+;;      ;; start isearch mode immediately
+;;      :isearch t
+;;      )))
+;; (setq yas-prompt-functions '(yas-popup-isearch-prompt yas-ido-prompt yas-no-prompt))
+
+;; Completing point by some yasnippet key
+
+;; (defun yas-ido-expand ()
+;;   "Lets you select (and expand) a yasnippet key"
+;;   (interactive)
+;;   (let ((original-point (point)))
+;;     (while (and
+;;             (not (= (point) (point-min) ))
+;;             (not
+;;              (string-match "[[:space:]\n]" (char-to-string (char-before)))))
+;;       (backward-word 1))
+;;     (let* ((init-word (point))
+;;            (word (buffer-substring init-word original-point))
+;;            (list (yas-active-keys)))
+;;       (goto-char original-point)
+;;       (let ((key (remove-if-not
+;;                   (lambda (s) (string-match (concat "^" word) s)) list)))
+;;         (if (= (length key) 1)
+;;             (setq key (pop key))
+;;           (setq key (ido-completing-read "key: " list nil nil word)))
+;;         (delete-char (- init-word original-point))
+;;         (insert key)
+;;         (yas-expand)))))
+;; (define-key yas-minor-mode-map (kbd "C-c -")     'yas-ido-expand)
+
 
 (provide 'python-editing)
 ;;; python-editing.el ends here

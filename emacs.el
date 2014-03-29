@@ -1,5 +1,21 @@
 (add-to-list 'load-path (expand-file-name "~/git/emacs.d/"))
 
+;;;; List of keybindings
+;
+;; From python-editing.el:
+; "C-c d" -> Duplicate line
+; "C-c c" -> Duplicate line and comment the first
+; "C-c l" -> Mark a line
+; "M-<up>" -> Move line or region up
+; "M-<down>" -> Move line or region down
+; "C-c -" -> Expand snippet
+;
+;; From emacs.el:
+; "C-x C-r" -> Recent files
+; "C-c e" -> ERC chat list
+; "C-c a" -> org-agenda
+; "C-c b" -> org-iswitchb
+
 ;;;;;;;;;;;;;;;;;;;
 ;; Package repos ;;
 ;;;;;;;;;;;;;;;;;;;
@@ -42,16 +58,12 @@
 ;; Save active buffer when frame loses focus (24.4)
 ;(add-hook 'focus-out-hook 'save-buffer)
 
-;; auto-indent on <enter>
-(add-hook 'prog-mode-hook '(lambda ()
-                             (local-set-key (kbd "RET") 'newline-and-indent)))
-
 ;; Move between windows with shift + arrows
 (if (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
 
-;; Save a list of recent files visited. (open recent file with C-x f)
+;; Save a list of recent files visited.
 (recentf-mode 1)
-(setq recentf-max-saved-items 100)
+(setq recentf-max-saved-items 20)
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)         ;; ibuffer bind to C-x C-b
 (global-set-key "\C-x\ \C-r" 'recentf-open-files) ;; recent files to C-x C-r
@@ -121,7 +133,7 @@
 
 (global-set-key [f11] 'switch-full-screen)
 (global-set-key [f10] 'switch-maximized)
-(global-set-key [f9] 'load-theme)             ;; Select theme bind to F9
+(global-set-key [f9] 'load-theme)
 
 
 ;;;;;;;;;;;;;;
@@ -163,7 +175,7 @@
 ;; ERC config ;;
 ;;;;;;;;;;;;;;;;
 
-;; ERC with ido:
+;; ERC with ido: (C-c e)
 (defun rgr/ido-erc-buffer()
   (interactive)
   (switch-to-buffer
@@ -184,35 +196,63 @@
 ;; Auto completion ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
-;; Global
-(require 'auto-complete)
-(global-auto-complete-mode 1)
-(require 'auto-complete-config nil t)
-(setq ac-dwim t)
-(ac-config-default)
-;; custom keybindings to use tab and enter
-(define-key ac-complete-mode-map "\t" 'ac-expand)
-(define-key ac-complete-mode-map "\r" 'ac-complete)
+(global-company-mode 1)
+
+;; Avoid yasnippet collision
+(defun check-expansion ()
+    (save-excursion
+      (if (looking-at "\\_>") t
+        (backward-char 1)
+        (if (looking-at "\\.") t
+          (backward-char 1)
+          (if (looking-at "->") t nil)))))
+
+  (defun do-yas-expand ()
+    (let ((yas/fallback-behavior 'return-nil))
+      (yas/expand)))
+
+  (defun tab-indent-or-complete ()
+    (interactive)
+    (if (minibufferp)
+        (minibuffer-complete)
+      (if (or (not yas/minor-mode)
+              (null (do-yas-expand)))
+          (if (check-expansion)
+              (company-complete-common)
+            (indent-for-tab-command)))))
+
+  (global-set-key [tab] 'tab-indent-or-complete)
 
 ;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
 
 ;; For Python:
-(add-hook 'python-mode-hook 'jedi:setup)
+;(add-hook 'python-mode-hook 'jedi:setup)
 
+;; <C-tab> jedi:complete
+;;     Complete code at point.
+;; C-c ? jedi:show-doc
+;;     Show the documentation of the object at point.
+;; C-c . jedi:goto-definition
+;;     Goto the definition of the object at point.
+;; C-c , jedi:goto-definition-pop-marker
+;;     Goto the last point where jedi:goto-definition was called.
+;; variable (jedi:use-shortcuts nil)
+;;     If non-nil, enable the following shortcuts:
+;;     M-. jedi:goto-definition
+;;     M-, jedi:goto-definition-pop-marker
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
 ;;;;;;;;;;;;;;
 (require 'flycheck)
 (setq flycheck-highlighting-mode 'sexps) ;; or 'lines
-(setq flycheck-completion-system 'ido)   ;; ido completion
+;(setq flycheck-completion-system 'ido)   ;; ido completion
 (setq flycheck-indication-mode nil)
 
 ;; For python:
 (add-hook 'python-mode-hook #'flycheck-mode)
-;(add-hook 'python-mode-hook '(setq flycheck-highlighting-mode 'sexps))
 
 ;; Check when saved only
 ;(setq flycheck-check-syntax-automatically '(mode-enabled save))
@@ -222,8 +262,11 @@
 ;; Python ;;
 ;;;;;;;;;;;;
 
-(require 'python-editing)
+(add-hook 'python-mode-hook 'anaconda-mode)
+(add-hook 'python-mode-hook 'anaconda-eldoc)
+(add-to-list 'company-backends 'company-anaconda)
 
+(require 'python-editing)
 (require 'highlight-indentation)
 (add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
 (add-hook 'python-mode-hook 'nlinum-mode)
@@ -241,9 +284,9 @@
 
 (require 'flyspell)
 (setq-default ispell-program-name "aspell")
-(add-hook 'text-mode-hook 'flyspell-mode)          ;; ispell-change-dictionary language
-(global-set-key "\C-cç" 'ispell-change-dictionary) ;; binded to C-c ç
-(require 'iso-transl)                              ;; accent bug workaround
+(add-hook 'text-mode-hook 'flyspell-mode)          ;; Load in text mode
+(global-set-key "\C-cç" 'ispell-change-dictionary) ;; Binded to C-c ç
+(require 'iso-transl)                              ;; Accent bug workaround
 
 
 ;;;;;;;;;;;;;;
