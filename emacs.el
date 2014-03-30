@@ -15,6 +15,7 @@
 ; "C-c e" -> ERC chat list
 ; "C-c a" -> org-agenda
 ; "C-c b" -> org-iswitchb
+; "C-c f" -> anaconda-mode-find-definition
 
 ;;;;;;;;;;;;;;;;;;;
 ;; Package repos ;;
@@ -35,7 +36,7 @@
 (setq inhibit-startup-message t)              ;; Login Screen
 (show-paren-mode 1)                           ;; Highlight matching parentheses
 (setq show-paren-delay 0)
-(setq echo-keystrokes 0.1)                    ;; Show keystrokes in progress
+(setq echo-keystrokes 0.1)                    ;; Show keystrokes in progres
 (set-default 'indent-tabs-mode nil)           ;; Never insert tabs
 (setq-default tab-width 4)                    ;; Default tab width
 (setq x-select-enable-clipboard t)            ;; Pasting selection outside of emacs
@@ -66,7 +67,7 @@
 (setq recentf-max-saved-items 20)
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)         ;; ibuffer bind to C-x C-b
-(global-set-key "\C-x\ \C-r" 'recentf-open-files) ;; recent files to C-x C-r
+(global-set-key (kbd "C-x C-r") 'recentf-open-files) ;; recent files to C-x C-r
 
 ;; UTF-8 please
 (setq locale-coding-system 'utf-8)
@@ -197,6 +198,7 @@
 ;;;;;;;;;;;;;;;;;;;;;
 
 (global-company-mode 1)
+(setq company-idle-delay t)  ; Start inmediately
 
 ;; Avoid yasnippet collision
 (defun check-expansion ()
@@ -265,6 +267,7 @@
 (add-hook 'python-mode-hook 'anaconda-mode)
 (add-hook 'python-mode-hook 'anaconda-eldoc)
 (add-to-list 'company-backends 'company-anaconda)
+(global-set-key (kbd "C-c f") 'anaconda-mode-find-definition)
 
 (require 'python-editing)
 (require 'highlight-indentation)

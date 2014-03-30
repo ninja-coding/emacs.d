@@ -57,7 +57,7 @@ re-downloaded in order to locate PACKAGE."
 
 (provide 'setup-package)
 
-;;-m Install requirements
+;; Install requirements
 (defun init--install-packages ()
   (packages-install
    '(magit
@@ -68,10 +68,8 @@ re-downloaded in order to locate PACKAGE."
      ido-vertical-mode
      ido-at-point
      smooth-scrolling
-     elpy
      flx-ido
      ido-ubiquitous
-     git-commit-mode
      gitconfig-mode
      gitignore-mode)))
 
