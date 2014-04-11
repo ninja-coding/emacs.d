@@ -4,6 +4,12 @@
 (set-face-attribute 'mode-line nil :box nil)                  
 (set-face-attribute 'mode-line-inactive nil :box nil)
 
+;; paren mode
+(require 'paren)
+    (set-face-background 'show-paren-match (face-background 'default))
+    (set-face-foreground 'show-paren-match "#00a8b8")
+    (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+
 ;; Company-mode
 (require 'color)
 
@@ -16,7 +22,6 @@
    `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
 
 ;; Powerline
-(add-to-list 'load-path "~/git/powerline")
 (require 'powerline)
 (powerline-default-theme)
 

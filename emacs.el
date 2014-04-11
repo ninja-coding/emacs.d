@@ -34,6 +34,7 @@
 (setq frame-title-format '(buffer-file-name "%f - GNU Emacs 24"))
 
 (setq inhibit-startup-message t)              ;; Login Screen
+(setq initial-scratch-message "")             ;; No scratch message
 (show-paren-mode 1)                           ;; Highlight matching parentheses
 (setq show-paren-delay 0)
 (setq echo-keystrokes 0.1)                    ;; Show keystrokes in progres
@@ -272,7 +273,7 @@
 (require 'python-editing)
 (require 'highlight-indentation)
 (add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
-(add-hook 'python-mode-hook 'nlinum-mode)
+;;(add-hook 'python-mode-hook 'linum-mode)
 
 ;;;;;;;
 ;; C ;;
