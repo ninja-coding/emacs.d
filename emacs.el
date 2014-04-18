@@ -26,15 +26,20 @@
 ;;;;;;;;
 ;; UI ;;
 ;;;;;;;;
-(require 'dark-theme)
+(require 'theme)
 (global-font-lock-mode 1)
 (setq font-lock-maximum-decoration t)
 
 ;; Window title ;; %b instead of %f to exclude path
 (setq frame-title-format '(buffer-file-name "%f - GNU Emacs 24"))
 
+(setq initial-buffer-choice "~/Dropbox/Code/")
 (setq inhibit-startup-message t)              ;; Login Screen
-(setq initial-scratch-message "")             ;; No scratch message
+(setq initial-scratch-message "")
+
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; scroll one line at a time
+(setq mouse-wheel-progressive-speed nil)            ;; don't accelerate scrolling
+
 (show-paren-mode 1)                           ;; Highlight matching parentheses
 (setq show-paren-delay 0)
 (setq echo-keystrokes 0.1)                    ;; Show keystrokes in progres
@@ -201,38 +206,35 @@
 (global-company-mode 1)
 (setq company-idle-delay t)  ; Start inmediately
 
-;; Avoid yasnippet collision
-(defun check-expansion ()
-    (save-excursion
-      (if (looking-at "\\_>") t
-        (backward-char 1)
-        (if (looking-at "\\.") t
-          (backward-char 1)
-          (if (looking-at "->") t nil)))))
-
-  (defun do-yas-expand ()
-    (let ((yas/fallback-behavior 'return-nil))
-      (yas/expand)))
-
-  (defun tab-indent-or-complete ()
-    (interactive)
-    (if (minibufferp)
-        (minibuffer-complete)
-      (if (or (not yas/minor-mode)
-              (null (do-yas-expand)))
-          (if (check-expansion)
-              (company-complete-common)
-            (indent-for-tab-command)))))
-
-  (global-set-key [tab] 'tab-indent-or-complete)
-
 ;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
 
+;;; use popup menu for yas-choose-value
+(require 'popup)
+(define-key popup-menu-keymap (kbd "M-n") 'popup-next)
+(define-key popup-menu-keymap (kbd "TAB") 'popup-next)
+(define-key popup-menu-keymap (kbd "<tab>") 'popup-next)
+(define-key popup-menu-keymap (kbd "<backtab>") 'popup-previous)
+(define-key popup-menu-keymap (kbd "M-p") 'popup-previous)
+(defun yas-popup-isearch-prompt (prompt choices &optional display-fn)
+  (when (featurep 'popup)
+    (popup-menu*
+     (mapcar
+      (lambda (choice)
+        (popup-make-item
+         (or (and display-fn (funcall display-fn choice))
+             choice)
+         :value choice))
+      choices)
+     :prompt prompt
+     ;; start isearch mode immediately
+     :isearch t
+     )))
+(setq yas-prompt-functions '(yas-popup-isearch-prompt yas-ido-prompt yas-no-prompt))
+
 ;; For Python:
 ;(add-hook 'python-mode-hook 'jedi:setup)
-
 ;; <C-tab> jedi:complete
 ;;     Complete code at point.
 ;; C-c ? jedi:show-doc
@@ -254,9 +256,6 @@
 ;(setq flycheck-completion-system 'ido)   ;; ido completion
 (setq flycheck-indication-mode nil)
 
-;; For python:
-(add-hook 'python-mode-hook #'flycheck-mode)
-
 ;; Check when saved only
 ;(setq flycheck-check-syntax-automatically '(mode-enabled save))
 
@@ -269,18 +268,23 @@
 (add-hook 'python-mode-hook 'anaconda-eldoc)
 (add-to-list 'company-backends 'company-anaconda)
 (global-set-key (kbd "C-c f") 'anaconda-mode-find-definition)
+(add-hook 'python-mode-hook #'flycheck-mode)
 
 (require 'python-editing)
 (require 'highlight-indentation)
 (add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
-;;(add-hook 'python-mode-hook 'linum-mode)
+
 
 ;;;;;;;
 ;; C ;;
 ;;;;;;;
+
 (setq c-default-style "linux"
       c-basic-offset 4)
-
+(add-hook 'c-mode-hook 'highlight-indentation-current-column-mode)
+;(load "c-eldoc")
+;(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
+;(add-hook 'c-mode-hook #'flycheck-mode)
 
 ;;;;;;;;;;;;
 ;; ispell ;;
