@@ -33,7 +33,7 @@
 ;; Window title ;; %b instead of %f to exclude path
 (setq frame-title-format '(buffer-file-name "%f - GNU Emacs 24"))
 
-(setq initial-buffer-choice "~/Dropbox/Code/")
+(setq initial-buffer-choice "~/git/")
 (setq inhibit-startup-message t)              ;; Login Screen
 (setq initial-scratch-message "")
 
