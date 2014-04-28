@@ -5,7 +5,6 @@ emacs.el
 
 ### Requirements
 
-- [sr-speedbar](http://www.emacswiki.org/emacs/sr-speedbar.el)
 - Full screen with [wmctrl](http://tomas.styblo.name/wmctrl/)
 
 ### Installation

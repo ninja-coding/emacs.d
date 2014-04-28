@@ -21,24 +21,19 @@
 ;; Package repos ;;
 ;;;;;;;;;;;;;;;;;;;
 (require 'setup-package)
-(require 'benchmark-init)
 
 ;;;;;;;;
 ;; UI ;;
 ;;;;;;;;
-(require 'theme)
+(if window-system (require 'theme))
 (global-font-lock-mode 1)
 (setq font-lock-maximum-decoration t)
 
 ;; Window title ;; %b instead of %f to exclude path
 (setq frame-title-format '(buffer-file-name "%f - GNU Emacs 24"))
 
-(setq initial-buffer-choice "~/git/")
 (setq inhibit-startup-message t)              ;; Login Screen
 (setq initial-scratch-message "")
-
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; scroll one line at a time
-(setq mouse-wheel-progressive-speed nil)            ;; don't accelerate scrolling
 
 (show-paren-mode 1)                           ;; Highlight matching parentheses
 (setq show-paren-delay 0)
@@ -47,23 +42,13 @@
 (setq-default tab-width 4)                    ;; Default tab width
 (setq x-select-enable-clipboard t)            ;; Pasting selection outside of emacs
 (delete-selection-mode 1)                     ;; Replace region with paste
-
 (setq fill-column 80)                         ;; Lines should be 80 characters long
-(setq enable-recursive-minibuffers t)         ;; Allow recursive minibuffers
 (defalias 'yes-or-no-p 'y-or-n-p)             ;; 'y' or 'n' instead of yes o no
 
 ;; Hide menu bar, toolbar, scroll bar
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
-
-;;;;;;;;;;;;;;
-;; Defaults ;;
-;;;;;;;;;;;;;;
-
-;; Save active buffer when frame loses focus (24.4)
-;(add-hook 'focus-out-hook 'save-buffer)
 
 ;; Move between windows with shift + arrows
 (if (fboundp 'windmove-default-keybindings) (windmove-default-keybindings))
@@ -72,7 +57,7 @@
 (recentf-mode 1)
 (setq recentf-max-saved-items 20)
 
-(global-set-key (kbd "C-x C-b") 'ibuffer)         ;; ibuffer bind to C-x C-b
+(global-set-key (kbd "C-x C-b") 'ibuffer)            ;; ibuffer bind to C-x C-b
 (global-set-key (kbd "C-x C-r") 'recentf-open-files) ;; recent files to C-x C-r
 
 ;; UTF-8 please
@@ -88,9 +73,6 @@
 (global-set-key (kbd "M-x") 'smex)
 (global-set-key (kbd "M-X") 'smex-major-mode-commands)
 
-;; Make zooming affect frame instead of buffers
-(require 'zoom-frm)
-
 ;; Keep cursor away from edges when scrolling up/down
 (require 'smooth-scrolling)
 
@@ -102,18 +84,8 @@
 (require 'undo-tree)
 (global-undo-tree-mode)
 
-;; Load sr-speedbar
-(load-file "~/git/emacs.d/sr-speedbar.el")
-(global-set-key (kbd "C-c ñ") 'sr-speedbar-toggle)
-;; Close sr-speedbar before exiting
-(defadvice save-buffers-kill-emacs (before update-mod-flag activate)
-  (sr-speedbar-close))
-
 ;; Load minimalism 
 (load-file "~/git/emacs.d/minimalism.el")
-
-;; Hide dired details
-(require 'dired-details-plus)
 
 ;; Fullscreen / Maximized:
 (defun switch-full-screen ()
@@ -164,10 +136,6 @@
 ;; disable ido faces to see flx highlights.
 (setq ido-use-faces nil)
 
-;; Ido at point ( C-, )
-(require 'ido-at-point)
-(ido-at-point-mode)
-
 ;; Use ido everywhere
 (require 'ido-ubiquitous)
 (ido-ubiquitous-mode 1)
@@ -176,7 +144,6 @@
 (require 'ido-vertical-mode)
 (ido-vertical-mode)
 (setq ido-vertical-define-keys 'C-n-C-p-up-down-left-right)
-
 
 ;;;;;;;;;;;;;;;;
 ;; ERC config ;;
@@ -233,31 +200,14 @@
      )))
 (setq yas-prompt-functions '(yas-popup-isearch-prompt yas-ido-prompt yas-no-prompt))
 
-;; For Python:
-;(add-hook 'python-mode-hook 'jedi:setup)
-;; <C-tab> jedi:complete
-;;     Complete code at point.
-;; C-c ? jedi:show-doc
-;;     Show the documentation of the object at point.
-;; C-c . jedi:goto-definition
-;;     Goto the definition of the object at point.
-;; C-c , jedi:goto-definition-pop-marker
-;;     Goto the last point where jedi:goto-definition was called.
-;; variable (jedi:use-shortcuts nil)
-;;     If non-nil, enable the following shortcuts:
-;;     M-. jedi:goto-definition
-;;     M-, jedi:goto-definition-pop-marker
 
 ;;;;;;;;;;;;;;
 ;; Flycheck ;;
 ;;;;;;;;;;;;;;
+
 (require 'flycheck)
 (setq flycheck-highlighting-mode 'sexps) ;; or 'lines
-;(setq flycheck-completion-system 'ido)   ;; ido completion
 (setq flycheck-indication-mode nil)
-
-;; Check when saved only
-;(setq flycheck-check-syntax-automatically '(mode-enabled save))
 
 
 ;;;;;;;;;;;;
@@ -281,10 +231,11 @@
 
 (setq c-default-style "linux"
       c-basic-offset 4)
-(add-hook 'c-mode-hook 'highlight-indentation-current-column-mode)
-;(load "c-eldoc")
-;(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
-;(add-hook 'c-mode-hook #'flycheck-mode)
+;; (add-hook 'c-mode-hook 'highlight-indentation-current-column-mode)  <- slows emacs in c-mode
+(load "c-eldoc")
+(add-hook 'c-mode-hook 'c-turn-on-eldoc-mode)
+(add-hook 'c-mode-hook #'flycheck-mode)
+
 
 ;;;;;;;;;;;;
 ;; ispell ;;
@@ -311,6 +262,10 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
 
+;; org-LaTeX
+(setq org-latex-create-formula-image-program 'dvipng)
+(set-default 'preview-scale-function 1.1)
+;(setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Saving Sessions ;;

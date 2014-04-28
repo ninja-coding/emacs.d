@@ -11,7 +11,5 @@
 
 (package-initialize)
 
-(unless (file-exists-p "~/.emacs.d/elpa/archives/melpa")
-  (package-refresh-contents))
 
 (provide 'setup-package)

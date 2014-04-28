@@ -23,8 +23,4 @@
    `(company-tooltip-selection ((t (:inherit font-lock-function-name-face))))
    `(company-tooltip-common ((t (:inherit font-lock-constant-face))))))
 
-;; Powerline
-(require 'powerline)
-(powerline-default-theme)
-
 (provide 'theme)
