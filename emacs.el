@@ -165,6 +165,9 @@
                                    (buffer-list)))))))
 (global-set-key (kbd "C-c e") 'rgr/ido-erc-buffer)
 
+'(erc-hide-list (quote ("JOIN" "QUIT")))  ;; Hide login and exit messages in erc
+'(erc-modules (quote (autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring stamp track)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Auto completion ;;
@@ -264,7 +267,7 @@
 
 ;; org-LaTeX
 (setq org-latex-create-formula-image-program 'dvipng)
-(set-default 'preview-scale-function 1.1)
+(set-default 'preview-scale-function 1.3)
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Saving Sessions ;;
