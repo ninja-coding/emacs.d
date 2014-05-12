@@ -268,7 +268,6 @@
 ;; org-LaTeX
 (setq org-latex-create-formula-image-program 'dvipng)
 (set-default 'preview-scale-function 1.3)
-(plist-put org-format-latex-options :scale 1.7)
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Saving Sessions ;;
